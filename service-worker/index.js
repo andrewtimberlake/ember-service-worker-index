@@ -72,14 +72,15 @@ function cacheFirstFetch(event) {
           (mostly an issue with Safari 11.1 where clearing the cache causes
           the browser to throw a non-descriptive blank error page).
         */
-      return fetch(INDEX_HTML_URL, { credentials: 'include' }).then(
-        (fetchedResponse) => {
-          caches
-            .open(CACHE_NAME)
-            .then((cache) => cache.put(INDEX_HTML_URL, fetchedResponse));
-          return fetchedResponse.clone();
-        }
-      );
+      return fetch(INDEX_HTML_URL, {
+        credentials: 'include',
+        cache: 'reload',
+      }).then((fetchedResponse) => {
+        caches
+          .open(CACHE_NAME)
+          .then((cache) => cache.put(INDEX_HTML_URL, fetchedResponse));
+        return fetchedResponse.clone();
+      });
     })
   );
 }
@@ -93,7 +94,7 @@ function cacheFallbackFetch(event, fetchTimeout) {
       reject(new Error('Request timed out'));
     }, FETCH_TIMEOUT);
 
-    return fetch(INDEX_HTML_URL, { credentials: 'include' })
+    return fetch(INDEX_HTML_URL, { credentials: 'include', cache: 'reload' })
       .then(function (response) {
         /**
         Clear the timeout as cleanup
